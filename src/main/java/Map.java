@@ -21,14 +21,15 @@ public class Map extends JPanel {
     private final int HUMAN_DOT = 1;
     private final int AI_DOT = 2;
     private final int EMPTY_DOT = 0;
-    private int fieldSyzeY = 3;
-    private int fieldSizeX = 3;
+    private int fieldSizeY;
+    private int fieldSizeX;
     private char[][] field;
 
     private int panelWidth;
     private int panelHeight;
     private int cellWidth;
     private int cellHeight;
+    private int wLen;
 
     private boolean isGameOver;
     private boolean isInitialized;
@@ -44,8 +45,11 @@ public class Map extends JPanel {
         isInitialized = false;
     }
 
-    void startNewGame(int mode, int fSzX, int fSzY, int wLen){
-        System.out.printf("Mode: %d;\nSize: x=%d, y=%d;\nWinLength: %d\n", mode, fSzX, fSzY, wLen);
+    void startNewGame(int mode, int fSzX, int fSzY, int wLen) {
+        fieldSizeY = fSzY;
+        fieldSizeX = fSzX;
+        System.out.printf("Mode: %d\nSize: x=%d;\nWin Length: %d\n", mode, fSzX, fSzY, wLen);
+        this.wLen = wLen;
         initMap();
         isGameOver = false;
         isInitialized = true;
@@ -56,6 +60,9 @@ public class Map extends JPanel {
         if(isGameOver || !isInitialized) return;
         int cellX = e.getX()/cellWidth;
         int cellY = e.getY()/cellHeight;
+
+        System.out.printf("x=%d, y=%d\n", cellX, cellY);
+
         if(!isValidCell(cellX, cellY) || !isEmptyCell(cellX, cellY)) return;
         field[cellY][cellX] = HUMAN_DOT;
         repaint();
@@ -69,22 +76,28 @@ public class Map extends JPanel {
         if(!isInitialized) return;;
         panelWidth = getWidth();
         panelHeight = getHeight();
-        cellHeight = panelHeight / 3;
-        cellWidth = panelWidth / 3;
+        cellHeight = panelHeight / fieldSizeY;
+        cellWidth = panelWidth / fieldSizeX;
+
+        for (int y = 0; y < fieldSizeY; y++) {
+            for (int x = 0; x < fieldSizeX; x++) {
+                System.out.printf("%c \t",field[y][x]);
+            }
+            System.out.println();
+        }
 
         g.setColor(Color.LIGHT_GRAY);
-        for(int h = 0; h < 3; h++){
+        for (int h = 0; h < fieldSizeY; h++) {
             int y = h * cellHeight;
             g.drawLine(0, y, panelWidth, y);
         }
-        for(int w = 0; w < 3; w++){
+        for (int w = 0; w < fieldSizeX; w++) {
             int x = w * cellWidth;
             g.drawLine(x, 0, x, panelHeight);
         }
-
-        for(int y = 0; y < fieldSyzeY; y++){
-            for(int x = 0; x < fieldSizeX; x++){
-                if(field[y][x] == EMPTY_DOT) continue;
+        for (int y = 0; y < fieldSizeY; y++) {
+            for (int x = 0; x < fieldSizeX; x++) {
+                if (field[y][x] == EMPTY_DOT) continue;
 
                 if(field[y][x] == HUMAN_DOT){
                     g.setColor(Color.GREEN);
@@ -106,19 +119,18 @@ public class Map extends JPanel {
         if(isGameOver) showMassageGameOver(g);
     }
 
-    private void initMap(){
-        fieldSyzeY = 3;
-        fieldSizeX = 3;
-        field = new char[fieldSyzeY][fieldSizeX];
-        for(int i = 0; i < fieldSyzeY; i++){
-            for(int j = 0; j < fieldSizeX; j++){
+    private void initMap() {
+        field = new char[fieldSizeY][fieldSizeX];
+        for (int i = 0; i < fieldSizeY; i++) {
+            for (int j = 0; j < fieldSizeX; j++) {
                 field[i][j] = EMPTY_DOT;
             }
         }
+
     }
 
     private boolean isValidCell(int x, int y){
-        return x >= 0 && x < fieldSizeX && y >= 0 && y < fieldSyzeY;
+        return x >= 0 && x < fieldSizeX && y >= 0 && y < fieldSizeY;
     }
 
     private boolean isEmptyCell(int x, int y){
@@ -126,7 +138,7 @@ public class Map extends JPanel {
     }
 
     private boolean isMapFull(){
-        for(int i = 0; i < fieldSyzeY; i++){
+        for(int i = 0; i < fieldSizeY; i++){
             for(int j = 0; j < fieldSizeX; j++){
                 if(field[i][j] == EMPTY_DOT) return false;
             }
@@ -138,7 +150,7 @@ public class Map extends JPanel {
         int x, y;
         do{
             x = RANDOM.nextInt(fieldSizeX);
-            y = RANDOM.nextInt(fieldSyzeY);
+            y = RANDOM.nextInt(fieldSizeY);
         }while (!isEmptyCell(x, y));
         field[y][x] = AI_DOT;
     }
@@ -190,8 +202,8 @@ public class Map extends JPanel {
         g.setFont(new Font("Areal", Font.BOLD, 48));
         switch (gameOverType){
             case STATE_DRAW -> g.drawString(MSG_DRAW, 180, getHeight() / 2);
-            case STATE_WIN_AI -> g.drawString(MSG_WIN_AI, 100, getHeight() / 2);
-            case STATE_WIN_HUMAN -> g.drawString(MSG_WIN_HUMAN, 100, getHeight() / 2);
+            case STATE_WIN_AI -> g.drawString(MSG_WIN_AI, 20, getHeight() / 2);
+            case STATE_WIN_HUMAN -> g.drawString(MSG_WIN_HUMAN, 70, getHeight() / 2);
             default -> throw new RuntimeException("Oops" + gameOverType);
         }
     }

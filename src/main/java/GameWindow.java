@@ -26,19 +26,15 @@ public class GameWindow extends JFrame{
         map = new Map();
         settings = new SettingsWindow(this);
 
-        btnExit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        btnExit.addActionListener(e -> System.exit(0));
+        btnStart.addActionListener(e -> settings.setVisible(true));
 
-        btnStart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                settings.setVisible(true);
-            }
-        });
+//        btnStart.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {          Это развёрнутая лямбда
+//                settings.setVisible(true);
+//            }
+//        });
 
         settings.setVisible(true);
 
