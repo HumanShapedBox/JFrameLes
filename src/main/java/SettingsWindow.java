@@ -24,6 +24,8 @@ public class SettingsWindow extends JFrame {
         setLocationRelativeTo(gameWindow);
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         panBottom = new JPanel(new GridLayout(9, 1));
+        gameModeButtonsGroup.add(humanVsAi);
+        gameModeButtonsGroup.add(humanVsHuman);
         panBottom.add(gameMode);
         panBottom.add(humanVsAi);
         panBottom.add(humanVsHuman);
@@ -53,6 +55,5 @@ public class SettingsWindow extends JFrame {
             }
         });
         add(panBottom);
-        add(btnStart);
     }
 }
